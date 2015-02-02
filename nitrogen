@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+#
+# nitrogen, a simple package manager for Go.
+# Copyright (c) 2015, Luca Chiricozzi
+# Released under the MIT License.
+# http://opensource.org/licenses/MIT
+#
+# Write your dependencies after this line --->
+#@
+# DON'T WRITE AFTER THIS LINE --->
+
+NEW=/tmp/nitrogen.$$
+GOPATH_SRC=$(echo "$GOPATH/src/")
+PKG_DIR="$PWD"
+PKGS=$(grep -E '^#@ ' $0 | sed 's/#@ //')
+
+## A comodity function to append lines
+## to the $NEW file.
+function append_install {
+    echo "$1" >>$NEW
+}
+
+## Remove $GOPATH_SRC from the given path
+function strip_gopath {
+    echo "${1#$GOPATH_SRC}"
+}
+
+## Check if a repository is a git one
+function is_git_repo {
+    return $(git rev-parse 2>/dev/null)
+}
+
+## Freeze the package dependencies
+function freeze {
+    # List dependencies of the package
+    all_deps=$(go list -f '{{join .Deps " "}}' \
+        | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}')
+
+    # Take only the ones that are external
+    deps=$(echo "$all_deps" | grep -v $(strip_gopath $PWD))
+
+    # A copy of the old nitrogen, stripped of comments.
+    old=$(grep -vE '(^#[^#]+|^#$)' $0)
+    
+    # Remove the new nitrogen file if something goes wrong.
+    trap 'rm -f $NEW; exit 1' SIGHUP SIGINT SIGTERM
+    
+    # Create the new nitrogen file
+    echo '#!/usr/bin/env bash' >$NEW
+    append_install '#'
+    append_install '# nitrogen, a simple package manager for Go.'
+    append_install '# Copyright (c) 2015, Luca Chiricozzi'
+    append_install '# Released under the MIT License.'
+    append_install '# http://opensource.org/licenses/MIT'
+    append_install '#'
+    append_install '# Write your dependencies after this line --->'
+
+    # Append dependencies
+    for i in $deps; do
+        repo_dir=$(echo "$GOPATH_SRC$i")
+        cd $repo_dir
+        if is_git_repo $repo_dir; then
+            repo=$(strip_gopath $(git rev-parse --show-toplevel))
+            vcs='git' 
+            ver=$(<$GOPATH_SRC$repo/.git/refs/heads/master)
+        else
+            repo=$(strip_gopath $(hg root))
+            vcs='hg'
+            ver="-c $(hg id -i)"
+        fi
+    cd $PKG_DIR
+    append_install "#@ $repo $vcs $ver"
+    echo "freeze: $repo $vcs $ver"
+    done
+
+    append_install "# DON'T WRITE AFTER THIS LINE --->"
+
+    # Append the nitrogen source.
+    append_install "$old"
+    
+    # If something goes wrong, terminate the copy.
+    trap '' SIGHUP SIGINT SIGTERM
+    cp $NEW $0
+    rm -f $NEW
+    
+    return $?
+}
+
+## Select a version of the repository
+function select_version {
+    echo "$1" >>outupt
+    cd "$GOPATH_SRC$1"
+    
+    echo "select: $1 $2 ${*:3}"
+
+    if [[ 'git' == "$2" ]]; then
+        git checkout ${*:3} >/dev/null 2>&1
+    else
+        hg update ${*:3} >/dev/null 2>&1
+    fi
+
+    return $?
+}
+
+## Restore a repository to the default version
+function clean_version {
+    cd "$GOPATH_SRC$1"
+
+    echo "clean: $1 $2 ${*:3}"
+
+    if [[ 'git' == "$2" ]]; then
+        git checkout master >/dev/null 2>&1
+    else
+        hg update >/dev/null 2>&1
+    fi
+
+    return $?
+}
+
+## An iterative map implementation
+function fmap {
+    while read; do
+        $1 $REPLY
+    done < <( echo "$2" )
+}
+
+## Call 'clean_version' on the given repositories
+function clean {
+    trap '' SIGHUP SIGINT SIGTERM
+
+    fmap clean_version "$PKGS"   
+
+    return $?
+}
+
+## Set up dependencies and install the package
+function install {
+    # If something goes wrong, bring repositories to the
+    # standard version.
+    trap clean SIGHUP SIGINT SIGTERM
+
+    fmap select_version "$PKGS"
+
+    cd $PKG_DIR
+    echo "install: $(strip_gopath $PKG_DIR)"
+    go install
+
+    if [[ "$1" == '--no-clean' ]]; then
+        return $?
+    fi
+    
+    # All right, clean reposiories and return
+    clean    
+
+    return $?
+}
+
+case $1 in
+    -f | --freeze) freeze ;;
+    -i | --install) install $2 ;;
+    -c | --clean) clean ;;
+    *)
+        echo "usage: $0 [-f|-i [--no-clean]|-c]"
+        echo ''
+        echo "  -f|--freeze  Freeze the package dependencies."
+        echo "  -i|--install Install the package dependencies,"
+        echo "               with --no-clean, leave the repositories at the"
+        echo "               version chosen in nitrogen."
+        echo "  -c|--clean   Clean the dependencies' repositories, restoring " 
+        echo '               the default versions (git checkout master or '
+        echo '               hg update every repository).'
+esac
