@@ -1,10 +1,10 @@
 nitrogen
 =========
 
-nitrogen is a simple, self-contained, package manager for Go.
+nitrogen is a simple, self-contained, dependency manager for Go.
 
 It is a bash script made of less than 150 lines of code. Dependencies are 
-listed in the same file of the package manager, so you need to distribute only 
+listed in the same file of the dependency manager, so you need to distribute only 
 one file and your users don't have to install other tools. Moreover, nitrogen 
 leverages on the git and hg versioning systems, so you don't need to distribute 
 the full dependecies tree with your package, the standard gopath mechanism just 
