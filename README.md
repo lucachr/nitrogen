@@ -20,13 +20,13 @@ Set up dependencies
 --------------------
 
 Dependencies are listed in a file called 'deps' that is located in the 
-same directory of nitrogen. Dependencies are formatted as "package version", 
-where "package" is the name of the Go package that you need to install 
-(e.g "golang.org/x/crypto/blowfish") and "version" is every suitable option for 
-`git checkout` or `hg update`.
+same directory of nitrogen (i.e. your package directory). Dependencies are 
+formatted as "package version", where "package" is the name of the Go package 
+that you need to install (e.g "golang.org/x/crypto/blowfish") and "version" is 
+every suitable option for `git checkout` or `hg update`.
 
 e.g.
-```bash
+```
     code.google.com/p/go-uuid -c 35bc42037350
     golang.org/x/crypto 4ed45ec682102c643324fae5dff8dab085b6c300
 ```
@@ -35,7 +35,7 @@ e.g.
 
 That's why nitrogen has a '-f' (--freeze) option.
 
-```bash
+```
     nitrogen -f
 ```
 
@@ -46,27 +46,27 @@ Install dependencies
 
 To install your package with the required dependencies, download it with
     
-```bash
+```
     go get -d PACKAGE
 ```
 
 Then start nitrogen with '-i' (--install). 
 
-```bash
+```
     nitrogen -i
 ```
 
 If you want to mantain your dependencies at the version required by your
 package, instead launch it with '-i --no-clean'
 
-```bash
+```
     nitrogen -i --no-clean
 ```
 
 After you have done with the work on your package, restore depencencies
 at the default (master branch or latest version) versions with
 
-```bash
+```
     nitrogen -c
 ```
 
@@ -74,5 +74,3 @@ License
 --------
 
 nitrogen is released under [the MIT License](http://opensource.org/licenses/MIT).
-
-
