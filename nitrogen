@@ -51,9 +51,6 @@ function freeze {
     # Remove the new dependency file if something goes wrong.
     trap 'rm -f $NEW; exit 1' SIGHUP SIGINT SIGTERM
     
-    # Create the new dependency file
-    >$NEW
-
     # Append dependencies
     for i in $deps; do
         repo_dir=$(echo "$GOPATH_SRC$i")
