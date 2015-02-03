@@ -41,7 +41,7 @@ function strip_gopath {
 
 ## Check if a repository is a git one
 function is_git_repo {
-    return $(git rev-parse 2>/dev/null)
+    $(git rev-parse 2>/dev/null)
 }
 
 ## Freeze the package dependencies
@@ -94,8 +94,6 @@ function freeze {
     trap '' SIGHUP SIGINT SIGTERM
     cp $NEW $0
     rm -f $NEW
-    
-    return $?
 }
 
 ## Select a version of the repository
@@ -110,8 +108,6 @@ function select_version {
     else
         hg update ${*:2} >/dev/null 2>&1
     fi
-
-    return $?
 }
 
 ## Restore a repository to the default version
@@ -125,8 +121,6 @@ function clean_version {
     else
         hg update >/dev/null 2>&1
     fi
-
-    return $?
 }
 
 ## An iterative map implementation
@@ -141,8 +135,6 @@ function clean {
     trap '' SIGHUP SIGINT SIGTERM
 
     fmap clean_version "$PKGS"   
-
-    return $?
 }
 
 ## Set up dependencies and install the package
@@ -158,13 +150,11 @@ function install {
     go install
 
     if [[ "$1" == '--no-clean' ]]; then
-        return $?
+        exit 0
     fi
     
     # All right, clean reposiories and return
     clean    
-
-    return $?
 }
 
 case "${1-''}" in
