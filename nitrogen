@@ -9,10 +9,24 @@
 #@
 # DON'T WRITE AFTER THIS LINE --->
 
+set -eu
+
 NEW=/tmp/nitrogen.$$
 GOPATH_SRC=$(echo "$GOPATH/src/")
 PKG_DIR="$PWD"
 PKGS=$(grep -E '^#@ ' $0 | sed 's/#@ //')
+
+## Echo some usage info.
+function usage {
+echo "usage: $0 [-f|-i [--no-clean]|-c]
+    -f | --freeze  Freeze the package dependencies.
+    -i | --install Install the package dependencies, with --no-clean, leave 
+                   the repositories at the version chosen in nitrogen.
+    -c | --clean   Clean the dependencies' repositories, restoring the 
+                   default versions (git checkout master or hg update every 
+                   repository)." 1>&2
+exit 2
+}
 
 ## A comodity function to append lines
 ## to the $NEW file.
@@ -155,18 +169,12 @@ function install {
     return $?
 }
 
-case $1 in
-    -f | --freeze) freeze ;;
-    -i | --install) install $2 ;;
-    -c | --clean) clean ;;
-    *)
-        echo "usage: $0 [-f|-i [--no-clean]|-c]"
-        echo ''
-        echo "  -f|--freeze  Freeze the package dependencies."
-        echo "  -i|--install Install the package dependencies,"
-        echo "               with --no-clean, leave the repositories at the"
-        echo "               version chosen in nitrogen."
-        echo "  -c|--clean   Clean the dependencies' repositories, restoring " 
-        echo '               the default versions (git checkout master or '
-        echo '               hg update every repository).'
+case "${1-''}" in
+    -f | --freeze) freeze 
+        ;;
+    -i | --install) install ${2-''} 
+        ;;
+    -c | --clean) clean 
+        ;;
+    *) usage
 esac
