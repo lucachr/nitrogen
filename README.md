@@ -8,7 +8,8 @@ listed in the same file of the dependency manager, so you need to distribute onl
 one file and your users don't have to install other tools. Moreover, nitrogen 
 leverages on the git and hg versioning systems, so you don't need to distribute 
 the full dependecies tree with your package, the standard gopath mechanism just 
-works well.
+works well. Currenlty, dependency packages with Git and Mercurial version 
+control systems are supported.
 
 Warning
 --------
@@ -20,15 +21,14 @@ Set up dependencies
 --------------------
 
 Dependencies are listed as comments starting with '#@'. Dependencies are
-formatted as "package vcs version", where "package" is the name of the Go
-package that you need to install (e.g "golang.org/x/crypto/blowfish"),
-"vcs" is the version controll system of the package (git or hg) and
+formatted as "package version", where "package" is the name of the Go
+package that you need to install (e.g "golang.org/x/crypto/blowfish") and
 "version" is every suitable option for `git checkout` or `hg update`.
 
 e.g.
 ```bash
-    #@ code.google.com/p/go-uuid hg -c 35bc42037350
-    #@ golang.org/x/crypto git 4ed45ec682102c643324fae5dff8dab085b6c300
+    #@ code.google.com/p/go-uuid -c 35bc42037350
+    #@ golang.org/x/crypto 4ed45ec682102c643324fae5dff8dab085b6c300
 ```
 
 ### Hey, I just want to freeze dependecies at the current version!

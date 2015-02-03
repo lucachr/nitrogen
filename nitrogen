@@ -16,7 +16,7 @@ GOPATH_SRC=$(echo "$GOPATH/src/")
 PKG_DIR="$PWD"
 PKGS=$(grep -E '^#@ ' $0 | sed 's/#@ //')
 
-## Echo some usage info.
+## Display usage info.
 function usage {
 echo "usage: $0 [-f|-i [--no-clean]|-c]
     -f | --freeze  Freeze the package dependencies.
@@ -75,16 +75,14 @@ function freeze {
         cd $repo_dir
         if is_git_repo $repo_dir; then
             repo=$(strip_gopath $(git rev-parse --show-toplevel))
-            vcs='git' 
             ver=$(<$GOPATH_SRC$repo/.git/refs/heads/master)
         else
             repo=$(strip_gopath $(hg root))
-            vcs='hg'
             ver="-c $(hg id -i)"
         fi
     cd $PKG_DIR
-    append_install "#@ $repo $vcs $ver"
-    echo "freeze: $repo $vcs $ver"
+    append_install "#@ $repo $ver"
+    echo "freeze: $repo $ver"
     done
 
     append_install "# DON'T WRITE AFTER THIS LINE --->"
@@ -105,12 +103,12 @@ function select_version {
     echo "$1" >>outupt
     cd "$GOPATH_SRC$1"
     
-    echo "select: $1 $2 ${*:3}"
+    echo "select: $1 ${*:2}"
 
-    if [[ 'git' == "$2" ]]; then
-        git checkout ${*:3} >/dev/null 2>&1
+    if is_git_repo $1; then
+        git checkout ${*:2} >/dev/null 2>&1
     else
-        hg update ${*:3} >/dev/null 2>&1
+        hg update ${*:2} >/dev/null 2>&1
     fi
 
     return $?
@@ -120,9 +118,9 @@ function select_version {
 function clean_version {
     cd "$GOPATH_SRC$1"
 
-    echo "clean: $1 $2 ${*:3}"
+    echo "clean: $1 ${*:2}"
 
-    if [[ 'git' == "$2" ]]; then
+    if is_git_repo $1; then
         git checkout master >/dev/null 2>&1
     else
         hg update >/dev/null 2>&1
