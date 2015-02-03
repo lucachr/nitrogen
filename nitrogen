@@ -12,7 +12,7 @@ DEP_FILE=deps
 GOPATH_SRC=$(echo "$GOPATH/src/")
 PKG_DIR="$PWD"
 
-## Display usage info.
+# Display usage info.
 function usage {
 echo "usage: $0 [-f|-i [--no-clean]|-c]
     -f | --freeze  Freeze the package dependencies.
@@ -24,23 +24,22 @@ echo "usage: $0 [-f|-i [--no-clean]|-c]
 exit 2
 }
 
-## A comodity function to append lines
-## to the $NEW file.
+# A comodity function to append lines to the $NEW file.
 function append_install {
     echo "$1" >>$NEW
 }
 
-## Remove $GOPATH_SRC from the given path
+# Remove $GOPATH_SRC from the given path
 function strip_gopath {
     echo "${1#$GOPATH_SRC}"
 }
 
-## Check if a repository is a git one
+# Check if a repository is a git one
 function is_git_repo {
     $(git rev-parse 2>/dev/null)
 }
 
-## Freeze the package dependencies
+# Freeze the package dependencies
 function freeze {
     # List dependencies of the package
     all_deps=$(go list -f '{{join .Deps " "}}' \
@@ -77,7 +76,7 @@ function freeze {
     rm -f $NEW
 }
 
-## Select a version of the repository
+# Select a version of the repository
 function select_version {
     echo "$1" >>outupt
     cd "$GOPATH_SRC$1"
@@ -91,7 +90,7 @@ function select_version {
     fi
 }
 
-## Restore a repository to the default version
+# Restore a repository to the default version
 function clean_version {
     cd "$GOPATH_SRC$1"
 
@@ -104,21 +103,21 @@ function clean_version {
     fi
 }
 
-## An iterative map implementation
+# An iterative map implementation
 function fmap {
     while read; do
         $1 $REPLY
     done <$2
 }
 
-## Call 'clean_version' on the given repositories
+# Call 'clean_version' on the given repositories
 function clean {
     trap '' SIGHUP SIGINT SIGTERM
 
     fmap clean_version $DEP_FILE
 }
 
-## Set up dependencies and install the package
+# Set up dependencies and install the package
 function install {
     # If something goes wrong, bring repositories to the
     # standard version.
