@@ -4,17 +4,13 @@
 # Copyright (c) 2015, Luca Chiricozzi
 # Released under the MIT License.
 # http://opensource.org/licenses/MIT
-#
-# Write your dependencies after this line --->
-#@
-# DON'T WRITE AFTER THIS LINE --->
 
 set -eu
 
-NEW=/tmp/nitrogen.$$
+NEW=/tmp/deps.$$
+DEP_FILE=deps
 GOPATH_SRC=$(echo "$GOPATH/src/")
 PKG_DIR="$PWD"
-PKGS=$(grep -E '^#@ ' $0 | sed 's/#@ //')
 
 ## Display usage info.
 function usage {
@@ -53,21 +49,11 @@ function freeze {
     # Take only the ones that are external
     deps=$(echo "$all_deps" | grep -v $(strip_gopath $PWD))
 
-    # A copy of the old nitrogen, stripped of comments.
-    old=$(grep -vE '(^#[^#]+|^#$)' $0)
-    
-    # Remove the new nitrogen file if something goes wrong.
+    # Remove the new dependency file if something goes wrong.
     trap 'rm -f $NEW; exit 1' SIGHUP SIGINT SIGTERM
     
-    # Create the new nitrogen file
-    echo '#!/usr/bin/env bash' >$NEW
-    append_install '#'
-    append_install '# nitrogen, a simple dependency manager for Go.'
-    append_install '# Copyright (c) 2015, Luca Chiricozzi'
-    append_install '# Released under the MIT License.'
-    append_install '# http://opensource.org/licenses/MIT'
-    append_install '#'
-    append_install '# Write your dependencies after this line --->'
+    # Create the new dependency file
+    >$NEW
 
     # Append dependencies
     for i in $deps; do
@@ -81,18 +67,13 @@ function freeze {
             ver="-c $(hg id -i)"
         fi
     cd $PKG_DIR
-    append_install "#@ $repo $ver"
+    append_install "$repo $ver"
     echo "freeze: $repo $ver"
     done
 
-    append_install "# DON'T WRITE AFTER THIS LINE --->"
-
-    # Append the nitrogen source.
-    append_install "$old"
-    
     # If something goes wrong, terminate the copy.
     trap '' SIGHUP SIGINT SIGTERM
-    cp $NEW $0
+    cp $NEW $DEP_FILE
     rm -f $NEW
 }
 
@@ -127,14 +108,14 @@ function clean_version {
 function fmap {
     while read; do
         $1 $REPLY
-    done < <( echo "$2" )
+    done <$2
 }
 
 ## Call 'clean_version' on the given repositories
 function clean {
     trap '' SIGHUP SIGINT SIGTERM
 
-    fmap clean_version "$PKGS"   
+    fmap clean_version $DEP_FILE
 }
 
 ## Set up dependencies and install the package
@@ -143,7 +124,7 @@ function install {
     # standard version.
     trap clean SIGHUP SIGINT SIGTERM
 
-    fmap select_version "$PKGS"
+    fmap select_version $DEP_FILE
 
     cd $PKG_DIR
     echo "install: $(strip_gopath $PKG_DIR)"

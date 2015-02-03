@@ -3,13 +3,12 @@ nitrogen
 
 nitrogen is a simple, self-contained, dependency manager for Go.
 
-It is a bash script made of less than 150 lines of code. Dependencies are 
-listed in the same file of the dependency manager, so you need to distribute only 
-one file and your users don't have to install other tools. Moreover, nitrogen 
-leverages on the git and hg versioning systems, so you don't need to distribute 
-the full dependecies tree with your package, the standard gopath mechanism just 
-works well. Currenlty, dependency packages with Git and Mercurial version 
-control systems are supported.
+It is a bash script made of less than 150 lines of code that you should 
+distribute with your Go package. Nitrogen leverages on the git and hg 
+versioning systems, so you don't need to distribute the full dependecies 
+tree with your package, the standard gopath mechanism just works well. 
+Currenlty, dependency packages with Git and Mercurial version control 
+systems are supported.
 
 Warning
 --------
@@ -20,15 +19,16 @@ environment!
 Set up dependencies
 --------------------
 
-Dependencies are listed as comments starting with '#@'. Dependencies are
-formatted as "package version", where "package" is the name of the Go
-package that you need to install (e.g "golang.org/x/crypto/blowfish") and
-"version" is every suitable option for `git checkout` or `hg update`.
+Dependencies are listed in a file called 'deps' that is located in the 
+same directory of nitrogen. Dependencies are formatted as "package version", 
+where "package" is the name of the Go package that you need to install 
+(e.g "golang.org/x/crypto/blowfish") and "version" is every suitable option for 
+`git checkout` or `hg update`.
 
 e.g.
 ```bash
-    #@ code.google.com/p/go-uuid -c 35bc42037350
-    #@ golang.org/x/crypto 4ed45ec682102c643324fae5dff8dab085b6c300
+    code.google.com/p/go-uuid -c 35bc42037350
+    golang.org/x/crypto 4ed45ec682102c643324fae5dff8dab085b6c300
 ```
 
 ### Hey, I just want to freeze dependecies at the current version!
@@ -39,8 +39,7 @@ That's why nitrogen has a '-f' (--freeze) option.
     nitrogen -f
 ```
 
-You should find your dependencies listed in the first lines of your nitrogen
-file.
+You should find your dependencies listed in the generated 'deps' file.
 
 Install dependencies
 ---------------------
