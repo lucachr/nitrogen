@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# nitrogen, a simple package manager for Go.
+# nitrogen, a simple dependency manager for Go.
 # Copyright (c) 2015, Luca Chiricozzi
 # Released under the MIT License.
 # http://opensource.org/licenses/MIT
@@ -62,7 +62,7 @@ function freeze {
     # Create the new nitrogen file
     echo '#!/usr/bin/env bash' >$NEW
     append_install '#'
-    append_install '# nitrogen, a simple package manager for Go.'
+    append_install '# nitrogen, a simple dependency manager for Go.'
     append_install '# Copyright (c) 2015, Luca Chiricozzi'
     append_install '# Released under the MIT License.'
     append_install '# http://opensource.org/licenses/MIT'
