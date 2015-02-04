@@ -7,7 +7,6 @@
 
 set -eu
 
-NEW=$(mktemp)
 DEP_FILE=deps
 GOPATH_SRC=$(echo "$GOPATH/src/")
 PKG_DIR="$PWD"
@@ -22,11 +21,6 @@ echo "usage: $0 [-f|-i [--no-clean]|-c]
                    default versions (git checkout master or hg update every 
                    repository)." 1>&2
 exit 2
-}
-
-# A comodity function to append lines to the $NEW file.
-function append_install {
-    echo "$1" >>$NEW
 }
 
 # Remove $GOPATH_SRC from the given path
@@ -47,9 +41,12 @@ function freeze {
 
     # Take only the ones that are external
     deps=$(echo "$all_deps" | grep -v $(strip_gopath $PWD))
+    
+    # Create a new temp file.
+    new=$(mktemp)
 
     # Remove the new dependency file if something goes wrong.
-    trap 'rm -f $NEW; exit 1' SIGHUP SIGINT SIGTERM
+    trap 'rm -f $new; exit 1' SIGHUP SIGINT SIGTERM
     
     # Append dependencies
     for i in $deps; do
@@ -63,14 +60,14 @@ function freeze {
             ver="-c $(hg id -i)"
         fi
     cd $PKG_DIR
-    append_install "$repo $ver"
+    echo "$repo $ver" >>$new
     echo "freeze: $repo $ver"
     done
 
     # If something goes wrong, terminate the copy.
     trap '' SIGHUP SIGINT SIGTERM
-    cp $NEW $DEP_FILE
-    rm -f $NEW
+    cp $new $DEP_FILE
+    rm -f $new
 }
 
 # Select a version of the repository
