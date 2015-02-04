@@ -48,7 +48,7 @@ To install your package with the required dependencies, download it with
     go get -d PACKAGE
 ```
 
-Then start nitrogen with '-i' (--install). 
+Then, from the package root, start nitrogen with '-i' (--install). 
 
 ```
     nitrogen -i
