@@ -8,8 +8,8 @@
 set -eu
 
 DEP_FILE=deps
-GOPATH_SRC=$(echo "$GOPATH/src/")
-PKG_DIR="$PWD"
+GOPATH_SRC="$GOPATH/src/"
+PKG_DIR=$PWD
 
 # Display usage info.
 function usage {
