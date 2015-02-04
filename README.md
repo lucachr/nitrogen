@@ -20,10 +20,10 @@ Set up dependencies
 --------------------
 
 Dependencies are listed in a file called 'deps' that is located in the 
-same directory of nitrogen (i.e. your package directory). Dependencies are 
-formatted as "package version", where "package" is the name of the Go package 
-that you need to install (e.g "golang.org/x/crypto/blowfish") and "version" is 
-every suitable option for `git checkout` or `hg update`.
+same directory of nitrogen (i.e. your package root directory). Dependencies 
+are formatted as "package version", where "package" is the name of the Go 
+package that you need to install (e.g "golang.org/x/crypto/blowfish") and 
+"version" is every suitable option for `git checkout` or `hg update`.
 
 e.g.
 ```
