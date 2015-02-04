@@ -84,6 +84,11 @@ function select_version {
     fi
 }
 
+# Install packages with go get
+function go_get {
+    go get -d $1 
+}
+
 # Restore a repository to the default version
 function clean_version {
     cd "$GOPATH_SRC$1"
@@ -116,6 +121,8 @@ function install {
     # If something goes wrong, bring repositories to the
     # standard version.
     trap clean SIGHUP SIGINT SIGTERM
+
+    fmap go_get $DEP_FILE
 
     fmap select_version $DEP_FILE
 
