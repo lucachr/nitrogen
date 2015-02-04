@@ -5,7 +5,7 @@ nitrogen is a simple dependency manager for Go.
 
 It is a bash script made of less than 150 lines of code that you should 
 distribute with your Go package. Nitrogen leverages on the git and hg 
-versioning systems, so you don't need to distribute the full dependecies 
+versioning systems, so you don't need to distribute the full dependecy 
 tree with your package, the standard gopath mechanism just works well. 
 
 Set up dependencies
