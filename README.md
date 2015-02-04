@@ -48,9 +48,10 @@ Then, from the package root, start nitrogen with '-i' (--install).
     nitrogen -i
 ```
 
-Nitrogen will download the required packages, install the package
-with dependencies at the specified versions, and restore the dependencies back
+Nitrogen downloads the required dependencies and installs the package with 
+dependencies at the specified versions, then it restores the dependencies back 
 to the default (master branch or latest version) versions. 
+
 If you want to mantain the dependencies at the version required by your
 package, instead launch it with '-i --no-clean'
 
