@@ -8,12 +8,6 @@ distribute with your Go package. Nitrogen leverages on the git and hg
 versioning systems, so you don't need to distribute the full dependecies 
 tree with your package, the standard gopath mechanism just works well. 
 
-Warning
---------
-
-I consider nitrogen in beta, so expect bugs. Don't use it in a production 
-environment!
-
 Set up dependencies
 --------------------
 
