@@ -36,7 +36,7 @@ You should find your dependencies listed in the generated 'deps' file.
 Install dependencies
 ---------------------
 
-To install your package with the required dependencies, download it with
+To install a package with the required dependencies, download it with
     
 ```
     go get -d PACKAGE
@@ -48,15 +48,18 @@ Then, from the package root, start nitrogen with '-i' (--install).
     nitrogen -i
 ```
 
-If you want to mantain your dependencies at the version required by your
+Nitrogen will download the required packages, install the package
+with dependencies at the specified versions, and restore the dependencies back
+to the default (master branch or latest version) versions. 
+If you want to mantain the dependencies at the version required by your
 package, instead launch it with '-i --no-clean'
 
 ```
     nitrogen -i --no-clean
 ```
 
-After you have done with the work on your package, restore depencencies
-at the default (master branch or latest version) versions with
+After you have done with the work on your package, restore the depencencies
+at the default versions with the '-c' (--clean) option.
 
 ```
     nitrogen -c
