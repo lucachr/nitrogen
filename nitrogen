@@ -7,7 +7,7 @@
 
 set -eu
 
-NEW=/tmp/deps.$$
+NEW=$(mktemp)
 DEP_FILE=deps
 GOPATH_SRC=$(echo "$GOPATH/src/")
 PKG_DIR="$PWD"
