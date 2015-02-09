@@ -80,7 +80,6 @@ function freeze {
 
 # Select a version of the repository
 function select_version {
-    echo "$1" >>outupt
     cd "$GOPATH_SRC$1"
     
     echo "select: $1 ${*:2}"
