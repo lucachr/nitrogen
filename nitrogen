@@ -85,11 +85,11 @@ function select_version {
     echo "select: $1 ${*:2}"
 
     if is_git_repo $1; then
-        git checkout ${*:2} >/dev/null 2>&1
+        git checkout -q ${*:2}
     elif is_bzr_repo $1; then
         bzr revert -q -r ${*:2}
     else
-        hg update ${*:2} >/dev/null 2>&1
+        hg update -q ${*:2}
     fi
 }
 
@@ -105,11 +105,11 @@ function clean_version {
     echo "clean: $1 ${*:2}"
 
     if is_git_repo $1; then
-        git checkout master >/dev/null 2>&1
+        git checkout -q master
     elif is_bzr_repo $1; then
         bzr revert -q
     else
-        hg update >/dev/null 2>&1
+        hg -q update
     fi
 }
 
