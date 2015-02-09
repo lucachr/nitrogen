@@ -69,13 +69,13 @@ function freeze {
         fi
     cd $PKG_DIR
     echo "$repo $ver" >>$new
-    echo "freeze: $repo $ver"
     done
 
     # If something goes wrong, terminate the copy.
     trap '' SIGHUP SIGINT SIGTERM
-    cp $new $DEP_FILE
+    cat $new | uniq >$DEP_FILE
     rm -f $new
+    fmap 'echo freeze: ' $DEP_FILE 
 }
 
 # Select a version of the repository
