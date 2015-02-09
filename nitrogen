@@ -43,7 +43,7 @@ function freeze {
     deps=$(echo "$all_deps" | grep -v $(strip_gopath $PWD))
     
     # Create a new temp file.
-    new=$(mktemp)
+    new=$(mktemp /tmp/nitrogen.XXXXXXXXXX) || exit 1
 
     # Remove the new dependency file if something goes wrong.
     trap 'rm -f $new; exit 1' SIGHUP SIGINT SIGTERM
