@@ -30,7 +30,12 @@ function strip_gopath {
 
 # Check if a repository is a git one
 function is_git_repo {
-    $(git rev-parse 2>/dev/null)
+    git rev-parse 2>/dev/null
+}
+
+# Check if a repository is a bzr one
+function is_bzr_repo {
+    bzr root >/dev/null 2>&1
 }
 
 # Freeze the package dependencies
@@ -55,6 +60,9 @@ function freeze {
         if is_git_repo $repo_dir; then
             repo=$(strip_gopath $(git rev-parse --show-toplevel))
             ver=$(<$GOPATH_SRC$repo/.git/refs/heads/master)
+        elif is_bzr_repo $repo_dir; then
+            repo=$(strip_gopath $(bzr root))
+            ver="revno:$(bzr revno)"
         else
             repo=$(strip_gopath $(hg root))
             ver="-c $(hg id -i)"
@@ -79,6 +87,8 @@ function select_version {
 
     if is_git_repo $1; then
         git checkout ${*:2} >/dev/null 2>&1
+    elif is_bzr_repo $1; then
+        bzr revert -q -r ${*:2}
     else
         hg update ${*:2} >/dev/null 2>&1
     fi
@@ -97,6 +107,8 @@ function clean_version {
 
     if is_git_repo $1; then
         git checkout master >/dev/null 2>&1
+    elif is_bzr_repo $1; then
+        bzr revert -q
     else
         hg update >/dev/null 2>&1
     fi
