@@ -7,13 +7,13 @@
 
 set -eu
 
-DEP_FILE=deps
+DEP_FILE="$PWD/deps"
 GOPATH_SRC="$GOPATH/src/"
 PKG_DIR=$PWD
 
 # Display usage info.
 function usage {
-echo "usage: $0 [-f|-i [--no-clean]|-c]
+echo "usage: $0 [-f | -i [--no-clean] | -c]
     -f | --freeze  Freeze the package dependencies.
     -i | --install Install the package dependencies, with --no-clean, leave 
                    the repositories at the version chosen in nitrogen.
@@ -80,6 +80,8 @@ function freeze {
 
 # Select a version of the repository
 function select_version {
+    trap 'clean; exit 1' ERR
+
     cd "$GOPATH_SRC$1"
     
     echo "select: $1 ${*:2}"
