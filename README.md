@@ -1,6 +1,26 @@
 nitrogen
 =========
 
+DEPRECATION NOTICE
+-------------------
+
+nitrogen has fulfilled its purpose, as a mean to provide a temporary solution 
+to the lack of ways to manage dependencies of programs written in Go, until the
+release of a tool on which the community would find agreement.
+
+With the release of Go 1.6, [vendoring](https://tip.golang.org/cmd/go/#hdr-Vendor_Directories)
+support is no longer considered experimental and it's the default way to handle
+dependencies, so the use of a dependency manager outside the Go standard tools is
+not necessary anymore.
+
+nitrogen will be deprecated with the release of Go 1.6. Support for bug fixes
+will be provided till the release of Go 1.7, then nitrogen will be no
+longer maintained and this repository will be kept only for reference.
+
+Thanks to everyone who took part, used or sent corrections to the project.
+
+_______________________________________________________________________________
+
 nitrogen is a simple dependency manager for Go.
 
 It is a bash script that you should distribute with your Go package. Nitrogen 
